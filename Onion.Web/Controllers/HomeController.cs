@@ -1,32 +1,42 @@
 using Microsoft.AspNetCore.Mvc;
-using Onion.Web.Models;
-using System.Diagnostics;
+using Onion.Web.UOW;
 
 namespace Onion.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private IUnitOfWork unitOfWork;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
+            this.unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+
+        // GET: Home
+        public ActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        public ActionResult FooterSlider()
         {
-            return View();
+            return PartialView("_FooterSlider", unitOfWork.SongService.GetSongsOrderedByVisit());
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public ActionResult Favorites()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return PartialView(unitOfWork.SongService.GetFavoritesSongs());
+        }
+
+        public ActionResult LatestSongsHeader()
+        {
+            return PartialView(unitOfWork.SongService.GetLatestSongsForHeader());
+        }
+
+        public ActionResult SiteSliders()
+        {
+            return PartialView(unitOfWork.SliderService.GetActivatedSliders());
         }
     }
 }

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Onion.Repository.ApplicationContext;
+using Onion.Web.IOC;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddControllersWithViews();
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+builder.Services.RegisterServices();
 
 WebApplication app = builder.Build();
 
